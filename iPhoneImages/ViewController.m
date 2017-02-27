@@ -9,6 +9,7 @@
 #import "ViewController.h"
 
 @interface ViewController ()
+@property (strong, nonatomic) IBOutlet UIImageView *iPhoneImageView;
 
 @end
 
@@ -22,6 +23,18 @@
     NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration];
     NSURLSessionDownloadTask *downloadTask = [session downloadTaskWithURL:url completionHandler:^(NSURL * _Nullable location, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         
+        if(error) {
+            NSLog(@"error: %@", error.localizedDescription);
+            return;
+        }
+        NSData *data = [NSData dataWithContentsOfURL:location];
+        UIImage *image = [UIImage imageWithData:data];
+        
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            //This will run on the main queue
+            
+            self.iPhoneImageView.image = image;
+        }];
     }];
     
     [downloadTask resume];
